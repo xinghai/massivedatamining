@@ -1,0 +1,16 @@
+ABOUT
+This remote is about tools for comparing similarity between two documents in massive dataset.
+
+The program first extracts all k-grams from documents, forming a feature set for each document. Then Jaccard similarity between two sets are computed using Minhash (a kind of locality sensitive hashing).
+
+Reference: http://infolab.stanford.edu/~ullman/mmds/ch3.pdf
+
+
+USAGE
+
+AUTHOR
+Xinghai Hu
+Carnegie Mellon University
+Email: xinghai.genyuan@gmail.com
+
+

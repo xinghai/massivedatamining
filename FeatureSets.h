@@ -2,59 +2,20 @@
 #include <set>
 #include <algorithm>
 #include <stdlib.h>
+#include <string>
+#include <algorithm>
 
 using namespace::std;
 
 class FeatureSets
 {
 public:
-	FeatureSets(set<T> &input1, set<T> &input2) s1 = input1, s2 = input2;
+	FeatureSets(set<string> &input1, set<string> &input2, vector<string>& fs, int k):s1(input1), s2(input2), featureset(fs), testrounds(k){}
 	~FeatureSets();
 
-	double jaccardsim(set<T>& s1, set<T>& s2, vector<T>& featureset, int testrounds)
-	{
-		vector<bool> f1(featureset.size(), false);
-		vector<bool> f2(featureset.size(), false);
-		setfeaturevector(s1, s2, featureset, f1, f2);
-		return minhash(f1, f2, f1.size(), testrounds);
-	}
+	double jaccardsim();
 
-	void setfeaturevector(set<T>& s1, set<T>& s2, vector<T>& featureset, vector<bool> &f1, vector<bool> &f2)
-	{
-		for(int i = 0; i< featureset.size(); i++)
-		{
-			if (s1.find(featureset[i]) != s1.end())
-				f1[i] = true;
-			if (s2.find(featureset[i]) != s2.end())
-				f2[i] = true;
-		}
-		return;
-	}
-
-	double minhash(vector<bool> &f1, vector<bool> &f2, int N, int testrounds)
-	{
-		vector<int> randperm(N, 0);
-		double crash = 0;
-		for (int i = 0; i < N; i++)
-			randperm[i] = i;
-		//randmix(randperm, N);
-		for (int i = 0; i < testrounds; i++)
-		{
-			for (int j = 0; j <testrounds; j++)
-			{
-				swap(v[j],v[j+randgen(N-j)]);
-				int idx = v[j];
-				if ((f1[idx] && !f2[idx]) || (f2[idx] && !f1[idx]))
-					break;
-				else if (f1[idx])
-				{
-					crash++;
-					break;
-				}
-			}
-		}
-		return (double)crash/(double)testrounds;
-	}
+	double minhash();
 
 	int randgen(int max)  //generate a random interger from 0 to max-1
 	{
@@ -68,5 +29,44 @@ public:
 	}
 
 private:
-	set<T> s1, set<T> s2;
+	set<string> s1, set<string> s2;
+	vector<string> featureset;
+	int testrounds;
 };
+
+FeatureSets::jaccardsim()
+{
+	vector<bool> f1(featureset.size(), false);
+	vector<bool> f2(featureset.size(), false);
+	setfeaturevector(featureset, f1, f2);
+	return minhash(testrounds);
+}
+
+double FeatureSets::minhash()
+{
+	int N = featuresets.size();
+	vector<int> randperm(N, 0);
+	double crash = 0;
+	for (int i = 0; i < N; i++)
+		randperm[i] = i;
+	//randmix(randperm, N);
+	for (int i = 0; i < testrounds; i++)
+	{
+		for (int j = 0; j <testrounds; j++)
+		{
+			swap(v[j],v[j+randgen(N-j)]);
+			int idx = v[j];
+			string pivot = featureset[idx];
+			bool flag1 = (find(s1.begin(), s1.end(), pivot) == s1.end())? false:true;
+			bool flag2 = (find(s2.begin(), s2.end(), pivot) == s2.end())? false:true;
+			if ((flag1 && !flag2) || (flag2 && !flag1))
+				break;
+			else if (flag1)
+			{
+				crash++;
+				break;
+			}
+		}
+	}
+	return (double)crash/(double)testrounds;
+}

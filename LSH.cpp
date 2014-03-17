@@ -3,25 +3,28 @@
 // Questions to solve
 // 1. how to use a general input data type, that is how to use template
 
-#include <FeatureSets.h>
-#include <NgramExtractor.h>
+#include "FeatureSets.h"
+#include "NgramExtractor.h"
 #include <iostream>
 
 using namespace::std;
 
+void Error(string s);
+
 int main()
 {
-	string s1, s2;
-	int k;
+	string str1, str2;   //file names for comparison
+	int k;   // number of grams
 	double sim;
+	set<string> allfeatures;
 
 	cout << "Welcome!" << endl;
 	cout << "Please input the first file name: ";
-	cin >> s1;
+	cin >> str1;
 	cout << endl;
 	//check whether the file name is valid
 	cout << "Please input the second file name: ";
-	cin >> s2;
+	cin >> str2;
 	cout << endl;
 	//check whether the file name is valid
 	cout << "Please input the number of grams: ";
@@ -32,15 +35,13 @@ int main()
 		Error("wrong number.");
 		return 0;
 	}
-	NgramExtractor ex1(s1, k);
-	NgramExtractor ex2(s2, k);
-	set <T> s1 = ex1.extract();
-	set <T> s2 = ex2.extract();
-
-	FeatureSets fs(s1, s2);
+	NgramExtractor ex1(str1, k);
+	NgramExtractor ex2(str2, k);
+	set <string> s1 = ex1.extract(allfeatures);
+	set <string> s2 = ex2.extract(allfeatures);
+	FeatureSets fs(s1, s2, 1000, allfeatures);
 	sim = fs.minhash();
 	cout << "The similarity between these two documents are: " << sim << endl;
-
 	return 0;
 }
 
